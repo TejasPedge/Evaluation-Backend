@@ -4,6 +4,8 @@ const GET_Posts  = async (req,res) => {
     try {
         const {device,device1,device2} = req.query;
 
+        console.log(req.query);
+
         const {name,gender,userId} = req.payload;
 
         obj = {
@@ -16,21 +18,25 @@ const GET_Posts  = async (req,res) => {
 
         }
 
-        if(device1) {
+        // if(device1) {
 
-            obj.device ={$regex : device1, $options : 'i'};
+        //     obj.device ={$regex : device1, $options : 'i'};
 
+        // }
+
+        // if(device2) {
+
+        //     obj.device ={$regex : device2, $options : 'i'};
+
+        // }
+
+        if(device1 && device2) {
+
+            obj.$and = [
+                { device: { $in: [device1, device2].map(val => new RegExp(val, 'i')) } }
+            ]
         }
 
-        if(device2) {
-
-            obj.device ={$regex : device2, $options : 'i'};
-
-        }
-
-
-
-       
         const data = await POST_MODEL.find(obj);
 
         res.send(data);
